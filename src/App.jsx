@@ -1,7 +1,7 @@
 import { BrowserRouter,Route,Routes } from "react-router";
-import Body from "./Body";
-import Login from "./Login";
-import Profile from "./Profile";
+import Body from "./components/Body";
+import Login from "./components/Login";
+import Profile from "./components/Profile";
 
 function App() {
   return (
@@ -14,8 +14,6 @@ function App() {
           </Route>
         </Routes>
       </BrowserRouter>
-     
-      <h1 className="text-3xl font-bold">Namaste Dev Tinder UI</h1>
     </>
   );
 }
