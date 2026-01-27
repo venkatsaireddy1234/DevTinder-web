@@ -11,10 +11,9 @@ const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const handleLogin = async () => {
-    console.log(email, password);
     try {
       const res = await axios.post(
-        BASE_URL + "login",
+        BASE_URL + "/login",
         {
           email,
           password,
