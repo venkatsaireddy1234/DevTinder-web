@@ -1,40 +1,53 @@
-import  { useState } from 'react'
-import { useDispatch } from 'react-redux';
-import { editUser } from '../utils/userSlice';
-import UserCard from './UserCard';
-import axios from 'axios';
-import { BASE_URL } from '../utils/constants';
+import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import { editUser } from "../utils/userSlice";
+import UserCard from "./UserCard";
+import axios from "axios";
+import { BASE_URL } from "../utils/constants";
 
 const EditProfile = ({ user }) => {
-const {firstName, lastName, age, photoUrl, about, gender}  = user;
-const [editFirstName, setFirstName] = useState(firstName);
-const [editLastName, setLastName] = useState(lastName);
-const [editAge, setAge] = useState(age);
-const [editPhotoUrl, setPhotoUrl] = useState(photoUrl);
-const [editAbout, setAbout] = useState(about);
-const [editGender, setGender] = useState(gender)
-const [error, setError] = useState("")
-
-const dispatch = useDispatch();
-const saveProfile = async () =>{
-    try{
-       const res = await axios.patch( BASE_URL + "/profile/edit",{
-        firstName : editFirstName,
-        lastName : editLastName,
-        age :editAge,
-        photoUrl : editPhotoUrl,
-        about : editAbout,
-        gender,editGender
-       },{
-        withCredentials : true
-       }) 
-       console.log(res);
-       dispatch(editUser(res?.data?.data));
-    }catch(err){
-        console.log(err.response.data)
-        setError(err.response.data);
+  const { firstName, lastName, age, photoUrl, about, gender } = user;
+  const [editFirstName, setFirstName] = useState(firstName);
+  const [editLastName, setLastName] = useState(lastName);
+  const [editAge, setAge] = useState(age);
+  const [editPhotoUrl, setPhotoUrl] = useState(photoUrl);
+  const [editAbout, setAbout] = useState(about);
+  const [editGender, setGender] = useState(gender || "Other");
+  const [error, setError] = useState("");
+  const [loadToast, setLoadToast] = useState(false);
+  const dispatch = useDispatch();
+  const saveProfile = async () => {
+    try {
+      const res = await axios.patch(
+        BASE_URL + "/profile/edit",
+        {
+          firstName: editFirstName,
+          lastName: editLastName,
+          age: editAge,
+          photoUrl: editPhotoUrl,
+          about: editAbout,
+          gender: editGender,
+        },
+        {
+          withCredentials: true,
+        },
+      );
+      console.log(res);
+      dispatch(editUser(res?.data?.data));
+      setLoadToast(true);
+      setError("");
+    } catch (err) {
+      console.log(err.response.data);
+      setError(err.response.data);
+      setLoadToast(false);
     }
-}
+  };
+
+  useEffect(() => {
+    if (!loadToast) return;
+    const timer = setTimeout(() => setLoadToast(false), 3000);
+    return () => clearTimeout(timer);
+  }, [loadToast]);
   return (
     <div className="flex justify-center gap-5 mt-20 ">
       <div className="card card-border bg-base-300 w-96 my-10">
@@ -73,13 +86,41 @@ const saveProfile = async () =>{
           </fieldset>
           <fieldset className="fieldset">
             <legend className="fieldset-legend">Gender</legend>
-            <input
-              type="text"
-              value={editGender}
-              onChange={(e) => setGender(e.target.value)}
-              className="input"
-              placeholder="Edit your Gender"
-            />
+            <div className="flex gap-4">
+              <label className="label cursor-pointer gap-2">
+                <input
+                  type="radio"
+                  name="gender"
+                  value="Male"
+                  checked={editGender === "Male"}
+                  onChange={(e) => setGender(e.target.value)}
+                  className="radio"
+                />
+                <span className="label-text">Male</span>
+              </label>
+              <label className="label cursor-pointer gap-2">
+                <input
+                  type="radio"
+                  name="gender"
+                  value="Female"
+                  checked={editGender === "Female"}
+                  onChange={(e) => setGender(e.target.value)}
+                  className="radio"
+                />
+                <span className="label-text">Female</span>
+              </label>
+              <label className="label cursor-pointer gap-2">
+                <input
+                  type="radio"
+                  name="gender"
+                  value="Other"
+                  checked={editGender === "Other"}
+                  onChange={(e) => setGender(e.target.value)}
+                  className="radio"
+                />
+                <span className="label-text">Other</span>
+              </label>
+            </div>
           </fieldset>
           <fieldset className="fieldset">
             <legend className="fieldset-legend">PhotoUrl</legend>
@@ -91,17 +132,19 @@ const saveProfile = async () =>{
               placeholder="Edit your PhotoUrl"
             />
           </fieldset>
-            <fieldset className="fieldset">
+          <fieldset className="fieldset">
             <legend className="fieldset-legend">About</legend>
-            <input
+            <textarea
               type="text"
               value={editAbout}
               onChange={(e) => setAbout(e.target.value)}
               className="input"
               placeholder="Edit your About"
+              rows="10"
+              cols="50"
             />
           </fieldset>
-          <p className='text-red-500'>{error}</p>
+          {error && <p className="text-red-500">{error}</p>}
           <div className="card-actions justify-center">
             <button className="btn btn-primary" onClick={saveProfile}>
               Save Profile
@@ -109,9 +152,24 @@ const saveProfile = async () =>{
           </div>
         </div>
       </div>
-      <UserCard user={{ firstName: editFirstName, about: editAbout, photoUrl: editPhotoUrl, age: editAge }} />
+      <UserCard
+        user={{
+          firstName: editFirstName,
+          about: editAbout,
+          photoUrl: editPhotoUrl,
+          age: editAge,
+          gender: editGender,
+        }}
+      />
+      {loadToast && (
+        <div className="toast toast-top toast-center">
+          <div className="alert alert-success">
+            <span>Succesfully edited your profile.</span>
+          </div>
+        </div>
+      )}
     </div>
-  )
-}
+  );
+};
 
-export default EditProfile
+export default EditProfile;
