@@ -7,11 +7,11 @@ import { addFeed } from "../utils/feedSlice";
 
 const Feed = () => {
   const dispatch = useDispatch();
-  const feed = useSelector((store)=> store.feed);
+  const userFeed = useSelector((store)=> store.feed);
   const fetchFeed = async () => {
     try {
-      let feed = await axios.get(BASE_URL + "/user/feed", { withCredentials: true });
-      dispatch(addFeed(feed?.data?.allUsers[0]));
+      let userFeed = await axios.get(BASE_URL + "/user/feed", { withCredentials: true });
+      dispatch(addFeed(userFeed?.data?.allUsers[0]));
     } catch (err) {
       console.log(err.message);
     }
@@ -21,7 +21,8 @@ const Feed = () => {
     fetchFeed();
   }, []);
 
-  return <UserCard feed={feed}/>;
+  return userFeed && (
+  <UserCard user={userFeed}/> );
 };
 
 export default Feed;
