@@ -4,10 +4,12 @@ const UserCard = ({ user }) => {
   return (
     <div className="flex justify-center border-1 border-cream-100 rounded">
       <div className="card bg-black-100 w-96 shadow-sm align-center">
-         <figure>
+        <figure className="h-64 w-full overflow-hidden">
           <img
-            src={photoUrl}
-            alt="photo"
+            src={photoUrl || "https://via.placeholder.com/600x400?text=No+Photo"}
+            alt={firstName ? `${firstName} photo` : "profile photo"}
+            className="h-full w-full object-cover"
+            loading="lazy"
           />
         </figure>
         <div className="card-body">

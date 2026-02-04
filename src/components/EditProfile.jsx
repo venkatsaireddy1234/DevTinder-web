@@ -11,6 +11,7 @@ const EditProfile = ({ user }) => {
   const [editLastName, setLastName] = useState(lastName);
   const [editAge, setAge] = useState(age);
   const [editPhotoUrl, setPhotoUrl] = useState(photoUrl);
+  const [photoFileName, setPhotoFileName] = useState("");
   const [editAbout, setAbout] = useState(about);
   const [editGender, setGender] = useState(gender || "Other");
   const [error, setError] = useState("");
@@ -41,6 +42,17 @@ const EditProfile = ({ user }) => {
       setError(err.response.data);
       setLoadToast(false);
     }
+  };
+
+  const handlePhotoChange = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setPhotoFileName(file.name);
+    const reader = new FileReader();
+    reader.onload = () => {
+      setPhotoUrl(reader.result);
+    };
+    reader.readAsDataURL(file);
   };
 
   useEffect(() => {
@@ -123,14 +135,16 @@ const EditProfile = ({ user }) => {
             </div>
           </fieldset>
           <fieldset className="fieldset">
-            <legend className="fieldset-legend">PhotoUrl</legend>
+            <legend className="fieldset-legend">Photo</legend>
             <input
-              type="text"
-              value={editPhotoUrl}
-              onChange={(e) => setPhotoUrl(e.target.value)}
-              className="input"
-              placeholder="Edit your PhotoUrl"
+              type="file"
+              accept="image/*"
+              onChange={handlePhotoChange}
+              className="file-input file-input-bordered w-full"
             />
+            {photoFileName && (
+              <span className="text-xs opacity-70">Selected: {photoFileName}</span>
+            )}
           </fieldset>
           <fieldset className="fieldset">
             <legend className="fieldset-legend">About</legend>
