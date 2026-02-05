@@ -174,6 +174,7 @@ const EditProfile = ({ user }) => {
           age: editAge,
           gender: editGender,
         }}
+        showActions={false}
       />
       {loadToast && (
         <div className="toast toast-top toast-center">
