@@ -9,14 +9,16 @@ const Feed = () => {
   const dispatch = useDispatch();
   const userFeed = useSelector((store) => store.feed);
   const currentUser = useSelector((store) => store.user);
-  console.log(currentUser)
   const [isLoading, setIsLoading] = useState(true);
+  const [isActionLoading, setIsActionLoading] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState(0);
   const fetchFeed = async () => {
     try {
       let userFeed = await axios.get(BASE_URL + "/user/feed", {
         withCredentials: true,
       });
-      dispatch(addFeed(userFeed?.data?.allUsers[0]));
+      dispatch(addFeed(userFeed?.data?.allUsers));
+      setCurrentIndex(0);
     } catch (err) {
       console.log(err.message);
     } finally {
@@ -28,6 +30,23 @@ const Feed = () => {
     fetchFeed();
   }, []);
 
+  const handleFeedAction = async (status) => {
+    const currentUserInFeed = userFeed?.[currentIndex];
+    if (!currentUserInFeed?._id) return;
+    try {
+      setIsActionLoading(true);
+      await axios.post(
+        BASE_URL + `/request/send/${status}/${currentUserInFeed._id}`,
+        {},
+        { withCredentials: true },
+      );
+      setCurrentIndex((prev) => prev + 1);
+    } catch (err) {
+      console.log(err.message);
+    } finally {
+      setIsActionLoading(false);
+    }
+  };
   if (isLoading) {
     const profilePhoto =
       currentUser?.data?.photoUrl || "https://via.placeholder.com/120?text=You";
@@ -48,12 +67,30 @@ const Feed = () => {
     );
   }
 
-  return (
-    userFeed && (
-      <div className="flex items-center justify-center m-10">
-        <UserCard user={userFeed} />
+  const currentCard = userFeed?.[currentIndex];
+
+  if (!currentCard) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="card bg-base-100 shadow-md">
+          <div className="card-body">
+            <h2 className="card-title">No users found</h2>
+            <p className="opacity-70">Try again later or update your profile.</p>
+          </div>
+        </div>
       </div>
-    )
+    );
+  }
+
+  return (
+    <div className="flex items-center justify-center m-10">
+      <UserCard
+        user={currentCard}
+        onIgnore={() => handleFeedAction("ignored")}
+        onAccept={() => handleFeedAction("interested")}
+        isLoading={isActionLoading}
+      />
+    </div>
   );
 };
 

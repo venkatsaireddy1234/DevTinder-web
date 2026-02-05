@@ -1,8 +1,14 @@
-const UserCard = ({ user, showActions = true }) => {
-  const { firstName, age, photoUrl, about } = user || {};
+const UserCard = ({
+  user,
+  showActions = true,
+  onIgnore,
+  onAccept,
+  isLoading = false,
+}) => {
+  const { firstName, age, photoUrl, about, _id } = user || {};
   const cardBodyClass = showActions ? "card-body" : "card-body pb-4";
   return (
-    <div className="flex justify-center border-1 border-cream-100 rounded w-90">
+    <div key={_id} className="flex justify-center  border-cream-100 rounded w-90">
       <div className="card bg-black-100 w-96 shadow-sm align-center">
         <figure className="w-full overflow-hidden">
           <img
@@ -27,6 +33,8 @@ const UserCard = ({ user, showActions = true }) => {
                 className="h-12 w-20 rounded border-2 border-rose-500 text-rose-500 text-xl font-semibold shadow-sm transition hover:bg-rose-500 hover:text-white"
                 aria-label="Ignore"
                 title="Ignore"
+                onClick={onIgnore}
+                disabled={isLoading}
               >
                 Ignore
               </button>
@@ -34,6 +42,8 @@ const UserCard = ({ user, showActions = true }) => {
                 className="h-12 w-30 rounded border-2 border-emerald-500 text-emerald-500 text-xl font-semibold shadow-sm transition hover:bg-emerald-500 hover:text-white"
                 aria-label="Interested"
                 title="Interested"
+                onClick={onAccept}
+                disabled={isLoading}
               >
                 Interested
               </button>
