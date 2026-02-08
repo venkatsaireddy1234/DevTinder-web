@@ -6,7 +6,8 @@ import { removeUser } from "../utils/userSlice";
 
 const NavBar = () => {
   const user = useSelector((store) => store.user);
-  const photo = user?.data?.photoUrl;
+  const profile = user?.data || user;
+  const photo = profile?.photoUrl;
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const handleLogout = async () => {
@@ -25,7 +26,7 @@ const NavBar = () => {
           DevTinder
         </Link>
       </div>
-      {user?.data && (
+      {profile && (
         <div className="flex gap-2">
           <div className="dropdown dropdown-end mx-5">
             <div
@@ -34,7 +35,10 @@ const NavBar = () => {
               className="btn btn-ghost btn-circle avatar"
             >
               <div className="w-10 rounded-full">
-                <img alt="Photo" src={photo} />
+                <img
+                  alt="Photo"
+                  src={photo || "https://via.placeholder.com/80?text=You"}
+                />
               </div>
             </div>
             <ul

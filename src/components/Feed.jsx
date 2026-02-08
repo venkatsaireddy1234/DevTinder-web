@@ -48,8 +48,9 @@ const Feed = () => {
     }
   };
   if (isLoading) {
-    const profilePhoto =
-      currentUser?.data?.photoUrl || "https://via.placeholder.com/120?text=You";
+    const profile = currentUser?.data || currentUser;
+    const photo = profile?.photoUrl;
+    const profilePhoto = photo || "https://via.placeholder.com/120?text=You";
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="relative flex items-center justify-center">
@@ -75,7 +76,9 @@ const Feed = () => {
         <div className="card bg-base-100 shadow-md">
           <div className="card-body">
             <h2 className="card-title">No users found</h2>
-            <p className="opacity-70">Try again later or update your profile.</p>
+            <p className="opacity-70">
+              Try again later or update your profile.
+            </p>
           </div>
         </div>
       </div>

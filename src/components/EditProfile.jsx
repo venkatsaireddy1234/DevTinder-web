@@ -5,8 +5,10 @@ import UserCard from "./UserCard";
 import axios from "axios";
 import { BASE_URL } from "../utils/constants";
 
-const EditProfile = ({ user }) => {
-  const { firstName, lastName, age, photoUrl, about, gender } = user;
+const EditProfile = ({user}) => {
+  console.log(user);
+  const { firstName, lastName, age, photoUrl, about, gender } =
+    user?.data || user?.data?.user || user;
   const [editFirstName, setFirstName] = useState(firstName);
   const [editLastName, setLastName] = useState(lastName);
   const [editAge, setAge] = useState(age);
@@ -33,12 +35,10 @@ const EditProfile = ({ user }) => {
           withCredentials: true,
         },
       );
-      console.log(res);
-      dispatch(editUser(res?.data?.data));
+      dispatch(editUser(res?.data?.user));
       setLoadToast(true);
       setError("");
     } catch (err) {
-      console.log(err.response.data);
       setError(err.response.data);
       setLoadToast(false);
     }
@@ -60,6 +60,15 @@ const EditProfile = ({ user }) => {
     const timer = setTimeout(() => setLoadToast(false), 3000);
     return () => clearTimeout(timer);
   }, [loadToast]);
+
+  useEffect(() => {
+    setFirstName(firstName || "");
+    setLastName(lastName || "");
+    setAge(age || "");
+    setPhotoUrl(photoUrl || "");
+    setAbout(about || "");
+    setGender(gender || "Other");
+  }, [firstName, lastName, age, photoUrl, about, gender]);
   return (
     <div className="flex justify-center gap-5 mt-20 ">
       <div className="card card-border bg-base-300 w-96 my-10">
@@ -143,7 +152,9 @@ const EditProfile = ({ user }) => {
               className="file-input file-input-bordered w-full"
             />
             {photoFileName && (
-              <span className="text-xs opacity-70">Selected: {photoFileName}</span>
+              <span className="text-xs opacity-70">
+                Selected: {photoFileName}
+              </span>
             )}
           </fieldset>
           <fieldset className="fieldset">
