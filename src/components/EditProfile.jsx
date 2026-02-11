@@ -5,8 +5,7 @@ import UserCard from "./UserCard";
 import axios from "axios";
 import { BASE_URL } from "../utils/constants";
 
-const EditProfile = ({user}) => {
-  console.log(user);
+const EditProfile = ({ user }) => {
   const { firstName, lastName, age, photoUrl, about, gender } =
     user?.data || user?.data?.user || user;
   const [editFirstName, setFirstName] = useState(firstName);
